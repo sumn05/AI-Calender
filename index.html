@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Todo - 할 일 & 링크 관리</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 캘린더 섹션 -->
+        <div class="calendar-section">
+            <div class="calendar-header">
+                <div class="month-display">
+                    <span class="month-number" id="monthNumber"></span>
+                </div>
+                <div class="calendar-controls">
+                    <button class="icon-btn" id="prevMonth">‹</button>
+                    <button class="icon-btn" id="nextMonth">›</button>
+                </div>
+            </div>
+            <div class="weekdays">
+                <div class="weekday">월</div>
+                <div class="weekday">화</div>
+                <div class="weekday">수</div>
+                <div class="weekday">목</div>
+                <div class="weekday">금</div>
+                <div class="weekday">토</div>
+                <div class="weekday">일</div>
+            </div>
+            <div class="calendar-grid" id="calendarGrid">
+                <!-- 캘린더 날짜들이 여기에 동적으로 추가됩니다 -->
+            </div>
+        </div>
+
+        <!-- 오른쪽 섹션 (Todo + 링크 저장소) -->
+        <div class="right-section">
+            <!-- Todo 리스트 섹션 -->
+            <div class="todo-section">
+                <div class="selected-date-header" id="selectedDateHeader">
+                    2024년 3월 14일 (일)
+                </div>
+                <div class="todo-list" id="todoList">
+                    <!-- To-Do 항목들이 여기에 동적으로 추가됩니다 -->
+                </div>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button class="add-event-btn" id="addTodoBtn">
+                        + 새로운 이벤트
+                    </button>
+                    <button class="add-event-btn" id="horoscopeBtn" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                        🔮 운세 확인하기
+                    </button>
+                </div>
+            </div>
+
+            <!-- 링크 저장소 섹션 -->
+            <div class="links-section">
+                <div class="links-header">
+                    <h3>저장된 링크</h3>
+                    <button class="add-link-icon-btn" id="addLinkIconBtn">
+                        <span>+</span>
+                    </button>
+                </div>
+                <div class="links-grid" id="linksGrid">
+                    <!-- 저장된 링크들이 여기에 동적으로 추가됩니다 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 링크 추가 모달 -->
+    <div class="modal" id="linkModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>새 링크 추가</h2>
+                <button class="close-btn" id="closeLinkModal">&times;</button>
+            </div>
+            <form id="linkForm">
+                <div class="form-group">
+                    <label for="linkName">서비스 이름 *</label>
+                    <input type="text" id="linkName" required placeholder="예: GitHub, YouTube" />
+                </div>
+                <div class="form-group">
+                    <label for="linkUrl">URL *</label>
+                    <input type="url" id="linkUrl" required placeholder="https://example.com" />
+                </div>
+                <div class="form-group">
+                    <label for="linkIconSelect">서비스 선택</label>
+                    <select id="linkIconSelect" class="service-select">
+                        <option value="">서비스 선택</option>
+                    </select>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" id="cancelLinkBtn">취소</button>
+                    <button type="submit" class="btn-submit">저장</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- To-Do 추가/수정 모달 -->
+    <div class="modal" id="todoModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">새 To-Do 추가</h2>
+                <button class="close-btn" id="closeModal">&times;</button>
+            </div>
+            <form id="todoForm">
+                <input type="hidden" id="todoId" />
+                
+                <div class="form-group">
+                    <label for="todoTitle">제목 *</label>
+                    <input type="text" id="todoTitle" required placeholder="할 일 제목을 입력하세요" />
+                </div>
+
+                <div class="form-group">
+                    <label for="todoNote">메모</label>
+                    <textarea id="todoNote" rows="3" placeholder="상세 내용을 입력하세요"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="todoDueDate">날짜 *</label>
+                    <input type="date" id="todoDueDate" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="todoStartTime">시작 시간</label>
+                    <input type="time" id="todoStartTime" />
+                </div>
+
+                <div class="form-group">
+                    <label for="todoEndTime">종료 시간</label>
+                    <input type="time" id="todoEndTime" />
+                </div>
+
+                <div class="form-group">
+                    <label>링크</label>
+                    <div id="linksContainer">
+                        <!-- 링크 입력 필드들이 여기에 동적으로 추가됩니다 -->
+                    </div>
+                    <button type="button" class="add-link-btn" id="addLinkBtn">+ 링크 추가</button>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" id="cancelBtn">취소</button>
+                    <button type="submit" class="btn-submit">저장</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 운세 확인 모달 -->
+    <div class="modal" id="horoscopeModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>오늘의 운세 확인</h2>
+                <button class="close-btn" id="closeHoroscopeModal">&times;</button>
+            </div>
+            <form id="horoscopeForm">
+                <div class="form-group">
+                    <label for="birthDate">생년월일 *</label>
+                    <input type="date" id="birthDate" required />
+                </div>
+                <div class="form-group">
+                    <label for="zodiacSign">별자리 *</label>
+                    <select id="zodiacSign" required>
+                        <option value="">별자리 선택</option>
+                        <option value="양자리">양자리 (3/21 - 4/19)</option>
+                        <option value="황소자리">황소자리 (4/20 - 5/20)</option>
+                        <option value="쌍둥이자리">쌍둥이자리 (5/21 - 6/21)</option>
+                        <option value="게자리">게자리 (6/22 - 7/22)</option>
+                        <option value="사자자리">사자자리 (7/23 - 8/22)</option>
+                        <option value="처녀자리">처녀자리 (8/23 - 9/22)</option>
+                        <option value="천칭자리">천칭자리 (9/23 - 10/22)</option>
+                        <option value="전갈자리">전갈자리 (10/23 - 11/21)</option>
+                        <option value="사수자리">사수자리 (11/22 - 12/21)</option>
+                        <option value="염소자리">염소자리 (12/22 - 1/19)</option>
+                        <option value="물병자리">물병자리 (1/20 - 2/18)</option>
+                        <option value="물고기자리">물고기자리 (2/19 - 3/20)</option>
+                    </select>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" id="cancelHoroscopeBtn">취소</button>
+                    <button type="submit" class="btn-submit">운세 확인하기</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 운세 결과 모달 -->
+    <div class="modal" id="horoscopeResultModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="horoscopeResultTitle">오늘의 운세</h2>
+                <button class="close-btn" id="closeHoroscopeResultModal">&times;</button>
+            </div>
+            <div style="padding: 30px; overflow-y: auto; max-height: calc(90vh - 180px); flex: 1;">
+                <div id="horoscopeResultContent" style="font-size: 1.1em; line-height: 1.8; color: #333;">
+                    <!-- 운세 내용이 여기에 표시됩니다 -->
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-submit" id="closeHoroscopeResultBtn" style="width: 100%;">확인</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 이벤트 상세보기 모달 -->
+    <div class="modal" id="detailModal">
+        <div class="modal-content detail-modal-content">
+            <div class="modal-header">
+                <h2 id="detailModalTitle">이벤트 상세</h2>
+                <button class="close-btn" id="closeDetailModal">&times;</button>
+            </div>
+            <div class="detail-content" id="detailContent">
+                <input type="hidden" id="detailTodoId" />
+                
+                <div class="form-group">
+                    <label for="detailTitle">제목</label>
+                    <input type="text" id="detailTitle" class="detail-input" />
+                </div>
+
+                <div class="form-group">
+                    <label for="detailNote">메모</label>
+                    <textarea id="detailNote" rows="4" class="detail-textarea" placeholder="상세 내용을 입력하세요"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>사진</label>
+                    <div class="photos-container" id="photosContainer">
+                        <!-- 사진들이 여기에 동적으로 추가됩니다 -->
+                    </div>
+                    <input type="file" id="photoUpload" accept="image/*" multiple style="display: none;" />
+                    <button type="button" class="add-photo-btn" id="addPhotoBtn">
+                        📷 사진 추가
+                    </button>
+                </div>
+
+                <div class="form-group">
+                    <label>링크</label>
+                    <div id="detailLinksContainer">
+                        <!-- 링크들이 여기에 표시됩니다 -->
+                    </div>
+                </div>
+
+                <div class="detail-info">
+                    <div class="info-item">
+                        <span class="info-label">날짜:</span>
+                        <span id="detailDate"></span>
+                    </div>
+                    <div class="info-item" id="detailTimeInfo" style="display: none;">
+                        <span class="info-label">시간:</span>
+                        <span id="detailTime"></span>
+                    </div>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" id="cancelDetailBtn">취소</button>
+                    <button type="button" class="btn-submit" id="saveDetailBtn">저장</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+

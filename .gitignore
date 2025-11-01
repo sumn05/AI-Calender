@@ -1,0 +1,46 @@
+# Dependencies
+node_modules/
+venv/
+__pycache__/
+*.pyc
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Environment
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Backup files
+*.backup
+*.backup2
+*_backup.*
+*_temp.*
+*_fixed.*
+
+# Empty folders
+js/
+css/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Build
+dist/
+build/
+
